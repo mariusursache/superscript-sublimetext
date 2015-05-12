@@ -1,0 +1,193 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: SuperScript.js
+scopeName: text.superscript
+fileTypes: [ss]
+uuid: 7f6e725c-53ff-47a6-b4eb-a9d9d12e2570
+
+repository:
+  comments:
+    patterns:
+    - name: comment.line.double-slash
+      match: //.*$
+    - name: comment.block
+      begin: /\*
+      end: \*/
+
+  constants:
+    patterns:
+    - name: constant.numeric
+      match: \d+
+    - name: constant.character
+      match: ([a-zA-Z0-9_]*)
+    - name: string.quoted.single
+      match: (\')(.*)(\')
+
+  characters:
+    patterns:
+    - name: keyword.control
+      match: (\,|\;|\|)
+
+  variables:
+    patterns:
+    - name: variable.parameter
+      match: (\<)([a-zA-Z0-9_]*)(\>)
+
+  alternates:
+    patterns:
+    - name: meta.alternates
+      contentName: string.unquoted
+      begin: (\s\()([a-zA-Z0-9\s\-]*)(\|)
+      beginCaptures:
+        '1': {name: keyword.control}
+        '2': {name: string.unquoted}
+        '3': {name: keyword.control}
+      end: (\))
+      endCaptures:
+        '1': {name: keyword.control}
+      patterns:
+      - include: '#characters'
+
+  optionals:
+    patterns:
+    - name: meta.optionals
+      contentName: constant.language
+      match: (\s\[)([a-zA-Z0-9\s\-]*)(\])
+      captures:
+        '1': {name: keyword.control}
+        '2': {name: string.unquoted}
+        '3': {name: keyword.control}
+
+
+  wildcards:
+    patterns:
+    - name: variable.parameter
+      match: (\*)(~*)(\d*)
+    - name: variable.parameter.wordnet
+      match: (\~)([a-zA-Z0-9\-]*)
+      captures:
+        '1': {name: variable.parameter}
+        '2': {name: string.unquoted}
+
+  functions:
+    patterns:
+    - name: meta.function
+      begin: (\^[a-zA-Z]*)(\()
+      beginCaptures:
+        '1': {name: storage.type.function}
+        '2': {name: keyword.control}
+      end: (\))
+      endCaptures:
+        '1': {name: keyword.control}
+      patterns:
+      - include: '#variables'
+      - include: '#constants'
+      - include: '#characters'
+
+  filters:
+    patterns:
+    - name: meta.function
+      begin: (\{\^[a-zA-Z]*)(\()
+      beginCaptures:
+        '1': {name: storage.type.function}
+        '2': {name: keyword.control}
+      end: (\))(\})
+      endCaptures:
+        '1': {name: keyword.control}
+        '2': {name: storage.type.function}
+      patterns:
+      - include: '#variables'
+      - include: '#constants'
+
+  topics:
+    patterns:
+    - name: storage.type.function
+      contentName: variable.parameter
+      begin: (\{topic=)
+      end: (\})
+
+  reply-functions:
+    patterns:
+    - name: string.unquoted
+      match: (^\s*\@[a-zA-Z0-9\-_]*)
+
+  topic-functions:
+    patterns:
+    - name: storage.type.function
+      contentName: variable.parameter
+      begin: (\{@)
+      end: (\})
+    - name: storage.type.function
+      match: (\{keep\})
+
+  triggers:
+    patterns:
+    - name: meta.trigger
+      contentName: string.unquoted
+      begin: ^(\s*\+\s|\s*\?\:*[a-zA-Z\:]*|\s*\?\s)
+      beginCaptures:
+        '1': {name: keyword.other}
+      end: $
+      patterns:
+      - include: '#comments'
+      - include: '#functions'
+      - include: '#alternates'
+      - include: '#wildcards'
+      - include: '#optionals'
+      - include: '#filters'
+
+  replies:
+    patterns:
+    - name: meta.reply
+      contentName: markup.raw
+      begin: ^(\s*\-\s)|(\s*\^\s)
+      beginCaptures:
+        '1': {name: keyword.other}
+        '2': {name: comment.line.number-sign}
+      end: $
+      patterns:
+      - include: '#variables'
+      - include: '#comments'
+      - include: '#functions'
+      - include: '#topic-functions'
+      - include: '#alternates'
+      - include: '#filters'
+
+  references:
+    patterns:
+    - name: variable.parameter
+      begin: ^\s*(\%\s)
+      end: $
+      patterns:
+      - include: '#comments'
+
+  topics:
+    patterns:
+    - name: meta.topic
+      begin: (^\s*\>\stopic|^\s*\>\spre|^\s*\>\spost)(\:*)((nostay|keep|system)*)(\s[a-zA-Z0-9\-_]*)(\s*)([a-zA-Z0-9\-\s_]*)(\(*)([a-zA-Z\-\s_]*)(\)*)
+      beginCaptures:
+        '1': {name: storage.type.class}
+        '2': {name: keyword.control}
+        '3': {name: keyword.control}
+        '4': {name: keyword.control}
+        '5': {name: variable.parameter}
+        '6': {name: variable.parameter}
+        '7': {name: invalid.illegal}
+        '8': {name: keyword.control}
+        '9': {name: constant.character}
+        '10': {name: keyword.control}
+      end: (^\s*\<\stopic|^\s*\<\spre|^\s*\<\spost)
+      endCaptures:
+        '1': {name: storage.type.class}
+      patterns:
+      - include: '#references'
+      - include: '#comments'
+      - include: '#triggers'
+      - include: '#replies'
+      - include: '#reply-functions'
+
+patterns:
+- include: '#comments'
+- include: '#triggers'
+- include: '#replies'
+- include: '#topics'
