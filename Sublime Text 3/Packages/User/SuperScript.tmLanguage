@@ -340,6 +340,10 @@
 							<key>include</key>
 							<string>#filters</string>
 						</dict>
+						<dict>
+							<key>include</key>
+							<string>#reply-functions</string>
+						</dict>
 					</array>
 				</dict>
 			</array>
@@ -350,7 +354,19 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>(^\s*\@[a-zA-Z0-9\-_]*)</string>
+					<string>(^\s*\@\s[a-zA-Z0-9\-_]*)</string>
+					<key>name</key>
+					<string>string.unquoted</string>
+				</dict>
+			</array>
+		</dict>
+		<key>reply-redirect</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>(\{\@[a-zA-Z0-9\-_]*\})</string>
 					<key>name</key>
 					<string>string.unquoted</string>
 				</dict>
@@ -378,13 +394,29 @@
 				</dict>
 			</array>
 		</dict>
+		<key>topic-redirect</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>(\{topic=)</string>
+					<key>contentName</key>
+					<string>variable.parameter</string>
+					<key>end</key>
+					<string>(\})</string>
+					<key>name</key>
+					<string>storage.type.function</string>
+				</dict>
+			</array>
+		</dict>
 		<key>topics</key>
 		<dict>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>begin</key>
-					<string>(^\s*\&gt;\stopic|^\s*\&gt;\spre|^\s*\&gt;\spost)(\:*)((nostay|keep|system)*)(\s[a-zA-Z0-9\-_]*)(\s*)([a-zA-Z0-9\-\s_]*)(\(*)([a-zA-Z\-\s_]*)(\)*)</string>
+					<string>(^\s*\&gt;\stopic|^\s*\&gt;\spre|^\s*\&gt;\spost)((\:nostay|\:keep|\:system)*)((\:nostay|\:keep|\:system)*)(\s[a-zA-Z0-9\-_]*)(\s*)([a-zA-Z0-9\-\s_]*)(\(*)([a-zA-Z\-\s_]*)(\)*)</string>
 					<key>beginCaptures</key>
 					<dict>
 						<key>1</key>
@@ -393,6 +425,11 @@
 							<string>storage.type.class</string>
 						</dict>
 						<key>10</key>
+						<dict>
+							<key>name</key>
+							<string>constant.character</string>
+						</dict>
+						<key>11</key>
 						<dict>
 							<key>name</key>
 							<string>keyword.control</string>
@@ -415,7 +452,7 @@
 						<key>5</key>
 						<dict>
 							<key>name</key>
-							<string>variable.parameter</string>
+							<string>keyword.control</string>
 						</dict>
 						<key>6</key>
 						<dict>
@@ -425,17 +462,17 @@
 						<key>7</key>
 						<dict>
 							<key>name</key>
-							<string>invalid.illegal</string>
+							<string>variable.parameter</string>
 						</dict>
 						<key>8</key>
 						<dict>
 							<key>name</key>
-							<string>keyword.control</string>
+							<string>invalid.illegal</string>
 						</dict>
 						<key>9</key>
 						<dict>
 							<key>name</key>
-							<string>constant.character</string>
+							<string>keyword.control</string>
 						</dict>
 					</dict>
 					<key>end</key>
@@ -471,6 +508,14 @@
 						<dict>
 							<key>include</key>
 							<string>#reply-functions</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#topic-redirect</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#reply-redirect</string>
 						</dict>
 					</array>
 				</dict>

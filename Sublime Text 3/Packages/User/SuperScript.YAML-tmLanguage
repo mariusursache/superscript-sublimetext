@@ -99,17 +99,22 @@ repository:
       - include: '#variables'
       - include: '#constants'
 
-  topics:
+  topic-redirect:
     patterns:
     - name: storage.type.function
       contentName: variable.parameter
       begin: (\{topic=)
       end: (\})
 
+  reply-redirect:
+    patterns:
+    - name: string.unquoted
+      match: (\{\@[a-zA-Z0-9\-_]*\})
+
   reply-functions:
     patterns:
     - name: string.unquoted
-      match: (^\s*\@[a-zA-Z0-9\-_]*)
+      match: (^\s*\@\s[a-zA-Z0-9\-_]*)
 
   topic-functions:
     patterns:
@@ -152,6 +157,7 @@ repository:
       - include: '#topic-functions'
       - include: '#alternates'
       - include: '#filters'
+      - include: '#reply-functions'
 
   references:
     patterns:
@@ -164,18 +170,19 @@ repository:
   topics:
     patterns:
     - name: meta.topic
-      begin: (^\s*\>\stopic|^\s*\>\spre|^\s*\>\spost)(\:*)((nostay|keep|system)*)(\s[a-zA-Z0-9\-_]*)(\s*)([a-zA-Z0-9\-\s_]*)(\(*)([a-zA-Z\-\s_]*)(\)*)
+      begin: (^\s*\>\stopic|^\s*\>\spre|^\s*\>\spost)((\:nostay|\:keep|\:system)*)((\:nostay|\:keep|\:system)*)(\s[a-zA-Z0-9\-_]*)(\s*)([a-zA-Z0-9\-\s_]*)(\(*)([a-zA-Z\-\s_]*)(\)*)
       beginCaptures:
         '1': {name: storage.type.class}
         '2': {name: keyword.control}
         '3': {name: keyword.control}
         '4': {name: keyword.control}
-        '5': {name: variable.parameter}
+        '5': {name: keyword.control}
         '6': {name: variable.parameter}
-        '7': {name: invalid.illegal}
-        '8': {name: keyword.control}
-        '9': {name: constant.character}
-        '10': {name: keyword.control}
+        '7': {name: variable.parameter}
+        '8': {name: invalid.illegal}
+        '9': {name: keyword.control}
+        '10': {name: constant.character}
+        '11': {name: keyword.control}
       end: (^\s*\<\stopic|^\s*\<\spre|^\s*\<\spost)
       endCaptures:
         '1': {name: storage.type.class}
@@ -185,6 +192,8 @@ repository:
       - include: '#triggers'
       - include: '#replies'
       - include: '#reply-functions'
+      - include: '#topic-redirect'
+      - include: '#reply-redirect'
 
 patterns:
 - include: '#comments'
